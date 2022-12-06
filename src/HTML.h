@@ -1,5 +1,4 @@
-const String postForms = R"===(
-<html lang="pt-BR">
+const String postForms = R"===(<html lang="pt-BR">
 <head>
   <title>⭐on</title>
 </head>
@@ -10,12 +9,11 @@ const String postForms = R"===(
   <H1><center>STAR ON</h1><br>
     <h2>canal<h2>
     <input class="canal" type="text" name="STREAMER">
-     <BR>
-      <BR>
+     
+      <div class="color-picker"></div>
       <input class="botao" type="submit" value="SALVAR">
       <BR>
-      <BR>
-      <BR>
+      
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,9 +21,10 @@ const String postForms = R"===(
     <link rel="stylesheet" href="style.css">
       
       
-    <div class="color-picker"></div>
-    <div id="color-indicator" class="color-indicator"></div>
-    <div id="color-picker"></div>
+    <div id="prendecores">
+      <div id="color-indicator" class="color-indicator"></div>
+      <div id="color-picker"></div>
+    </div>
  
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -37,14 +36,17 @@ const String postForms = R"===(
         });
         colorPicker.on('color:change', function(color) {
             colorIndicator.style.backgroundColor = color.hexString;
-        
+                  
+       console.log(color.hexString); 
           
         });
     </script>
    </div>
 </body>
 </html>
-  <style>
+    <style>
+      
+      
 body{
   color:#fff;
     background: #20293c;
@@ -59,17 +61,27 @@ body{
 }
 .color-indicator{
     display: inline-block;
-    width: 200px;
-    height: 200px;
+    width: 7em;
+    height: 7em;
+    border-bottom: 10px;
     background-color: #fff;
-    border-radius: 20px;
+    border-radius: 10px;
     vertical-align: middle;
 }
 #color-picker{
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 40px;
+  margin-top: 15px;
+  display: inline-block;  
+  vertical-align: middle;
+  margin-left: 0px;
 }
+
+#prendecores{
+  display: inline-block;  
+  vertical-align: middle;
+  width: 20em;
+}
+
+
 .footer {
   position: absolute;
   right: 0;
@@ -97,25 +109,67 @@ h2{
     align-items: center;
 }
 .canal{
+   text-shadow: 0px 0px 2px #000;
+   
+  text-align: center;
+  font-size: 20px;
    color:#ff00bf;
   background: #20293c;
   border-radius: 5px;
    border-width: thin;
    border-color: #ff00bf;
+   width: 10.5em;
+   height:1.6em;
+  
 }
 .quadrado{
+  padding-top: 5vh;
+  padding-bottom: 5vh;
   background: #242E42;
   border-radius: 25px;
-  padding: 80px;
+  width: 70vw;
 }
 .botao{
+  
+  font-size: 20px;
   color:#fff;
   background: #ff00bf;
   border-radius: 5px;
-   border-width: thin;
-   width: 40%;
+   border-width: 2px;
+    width: 10.5em;
    height:1.6em;
    border-color: #ff00bf;
+}
+
+
+@media only screen and (max-width: 680px) {
+  .quadrado{
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+  background: #242E42;
+  border-radius: 25px;
+  width: 90vw;
+}
+#prendecores{
+  display: inline-block;  
+  vertical-align: middle;
+  width: 9em;
+
+}
+.botao{
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+.color-indicator{
+    display: inline-block;
+    width: 9em;
+    height: 50px;
+    border-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    vertical-align: middle;
+}
+ 
 }
 </style>
 
