@@ -18,6 +18,13 @@ const char* host = "id.twitch.tv";
 const uint16_t port = 443;
 String access_token = "";
 
+
+//LED config
+#define PIN 4
+#define NUMPIXELS 1
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+
 // WifiManager config
 void wmConfig(){
     //WiFiManager, Local intialization. Once its business is done, there is no need to keep it around
@@ -28,14 +35,14 @@ void wmConfig(){
     res = wm.autoConnect("StarON"); // password protected ap
  
     if(!res) {
-        Serial.println("Failed to connect");
+        //Serial.println("Failed to connect");
         // ESP.restart();
     } 
     else {
         //if you get here you have connected to the WiFi    
-        Serial.println("connected...yeey :)");
+       // Serial.println("connected...yeey :)");
     }
-        Serial.println(WiFi.localIP());
+       // Serial.println(WiFi.localIP());
 }
 
 // WebServer config
@@ -56,8 +63,18 @@ void handleGetParam() {
         cor = server.arg("COLOR"); // get the COLOR
     }
 
-    Serial.println("Streamer Name - ");
-    Serial.print(streamerName);
+    for(int i = 0 ; i < 3; i++){
+
+      pixels.setPixelColor(0,atol(cor.c_str()));
+      pixels.show();
+      delay(200);
+      pixels.clear();
+      pixels.show();
+      delay(200);
+    }
+
+    //Serial.println("Streamer Name - ");
+    //Serial.print(streamerName);
     Serial.print("cor:  ");
     Serial.println(cor);
 }
@@ -78,11 +95,6 @@ void handleNotFound() {
 }
 
 
-//LED config
-#define PIN 4
-#define NUMPIXELS 2 
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
 
 
 void setup() {
@@ -92,7 +104,7 @@ void setup() {
      if (!MDNS.begin("starOn")) {             // Start the mDNS responder for esp8266.local
     Serial.println("Error setting up MDNS responder!");
     }
-   Serial.println("mDNS responder started");
+   //Serial.println("mDNS responder started");
    MDNS.addService("http", "tcp", 80);
    MDNS.notifyAPChange();
    WiFi.hostname("starOn");
@@ -101,24 +113,13 @@ void setup() {
     server.on("/getName", handleGetParam);
     server.onNotFound(handleNotFound);
     server.begin();
-    Serial.println("HTTP server started");
+    //Serial.println("HTTP server started");
 
     //LED
-    Serial.println("TA ON");
+ 
     pixels.begin();
     pixels.clear();
-    delay(500);
-    for (int i = 0 ; i< 5 ; i++){
-    pixels.setPixelColor(1, pixels.Color(254, 0, 153));
-    pixels.show();
-    delay(800);
-    pixels.clear();
-    pixels.show();
-    delay(800);
-    }
- 
 
-   
 }
 
  
@@ -150,7 +151,7 @@ void loop() {
 
 
   //read back one line from server
-  Serial.println("receiving from remote server");
+ // Serial.println("receiving from remote server");
   unsigned long timeout = millis();
   while (client.available() == 0) {
     if (millis() - timeout > 5000) {
@@ -186,7 +187,7 @@ void loop() {
     return;
   }  
 
-  Serial.println("GET /helix/streams?user_login="+streamerName+ " HTTP/1.1");
+  //Serial.println("GET /helix/streams?user_login="+streamerName+ " HTTP/1.1");
   // This will send the request to the server
   client.println("GET /helix/streams?user_login="+streamerName+ " HTTP/1.1");
   client.println("Host: api.twitch.tv"); 
@@ -205,7 +206,6 @@ void loop() {
     }
   }
   ss.clear();
-
   delay(1000);
 
   capturing = false;
@@ -221,14 +221,14 @@ void loop() {
     }
   }
 
-  Serial.println("Recebendo stream data");
-  Serial.println(response);
+ // Serial.println("Recebendo stream data");
+ // Serial.println(response);
   if (response.length() > 27){
-    pixels.setPixelColor(1, pixels.Color(254, 0, 153));
+    pixels.setPixelColor(0,atol(cor.c_str()));
     pixels.show();   
     Serial.println("TA ON");
   }else{
-     pixels.setPixelColor(1, pixels.Color(0, 0, 255));
+     pixels.clear();
      pixels.show(); 
     Serial.println("TA OFF");
     
