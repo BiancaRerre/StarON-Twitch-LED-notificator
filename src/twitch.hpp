@@ -1,7 +1,11 @@
 #if !defined(TWITCH_HPP__)
 #define TWITCH_HPP__
 #include <Arduino_JSON.h>
+#ifndef ESP32
 #include <ESP8266WiFi.h>
+#else 
+#include <WiFi.h>
+#endif 
 #include <WiFiClientSecure.h>
 
 #include "./credencials.h"
@@ -25,10 +29,10 @@ bool awaitTimeOut(WiFiClientSecure* client) {
         if (millis() - timeout > 5000) {
             Serial.println(">>> Client Timeout !");
             client->stop();
-            return 0;
+            return 1;
         }
     }
-    return 1;
+    return 0;
 }
 
 bool handGetTwitchToken() {
@@ -55,7 +59,10 @@ bool handGetTwitchToken() {
     client.println();
     client.println(data);
 
-    if (awaitTimeOut(&client)) return 0;
+    Serial.println("send get Token");
+
+    if (awaitTimeOut(&client)) return false;
+
 
     std::stringstream ss;
     bool capturing = false;
@@ -136,6 +143,7 @@ bool streamerIsOn(String streamerName) {
     if (getTwitchToken()) {
         if ((millis() - latTimeGetStreamerOn) < 3000) return isStreamerOn;
         isStreamerOn = handStreamerIsOn(streamerName);
+        latTimeGetStreamerOn = millis();
         return isStreamerOn;
     }
     return false;

@@ -1,6 +1,11 @@
 #include <Adafruit_NeoPixel.h>
+#ifdef ESP32
+#include <ESPmDNS.h>
+#include <WebServer.h>
+#else
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#endif
 #include <WiFiManager.h>  // https://github.com/tzapu/WiFiManager
 
 #include <cstring>
@@ -36,7 +41,11 @@ void wmConfig() {
 }
 
 // WebServer config
+#ifdef ESP32
+WebServer server(80);  // Set web server port number to 80
+#else
 ESP8266WebServer server(80);  // Set web server port number to 80
+#endif
 String streamerName = "";
 String cor = "";
 
@@ -92,7 +101,6 @@ void setup() {
     }
     // Serial.println("mDNS responder started");
     MDNS.addService("http", "tcp", 80);
-    MDNS.notifyAPChange();
     WiFi.hostname("starOn");
 
     server.on("/", hendleIndex);
@@ -107,13 +115,16 @@ void setup() {
     pixels.clear();
 }
 
+uint32_t lasTimeUpdateLed;
+
 void loop() {
+#ifndef ESP32
     MDNS.update();
+#endif
 
     server.handleClient();
-    client.setInsecure();
 
-    if (streamerName != "") {
+    if (streamerName != "" && (millis() - lasTimeUpdateLed) > 300) {
         // Serial.println("Recebendo stream data");
         // Serial.println(response);
         if (streamerIsOn(streamerName)) {
@@ -125,11 +136,8 @@ void loop() {
             pixels.show();
             Serial.println("TA OFF");
         }
-
-        Serial.println("closing connection");
-        client.stop();
-
-        Serial.println("wait 5 sec...");
-        delay(5000);
+        lasTimeUpdateLed = millis();
+        // Serial.println("wait 5 sec...");
+        // delay(5000);
     }
 }
