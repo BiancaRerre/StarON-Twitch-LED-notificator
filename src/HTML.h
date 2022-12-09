@@ -1,4 +1,4 @@
-const String postForms = R"===(
+const char postForms[] PROGMEM = R"===(
   <html lang="pt-BR">
 <head>
   <title>⭐StarOn</title>
@@ -73,7 +73,7 @@ const String postForms = R"===(
       console.log("")
 
       var xmlhttp = new XMLHttpRequest();
-             xmlhttp.open("GET", `/?STREAMER=${document.getElementById('canal').value}&COLOR=${cor.slice(1)}`);
+             xmlhttp.open("GET", `/getName?STREAMER=${document.getElementById('canal').value}&COLOR=${cor.slice(1)}`);
              xmlhttp.send();
       
       

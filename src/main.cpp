@@ -22,7 +22,7 @@ String access_token = "";
 void wmConfig(){
     //WiFiManager, Local intialization. Once its business is done, there is no need to keep it around
     WiFiManager wm;
-    //wm.resetSettings(); // reset the wifi config
+   // wm.resetSettings(); // reset the wifi config
     
     bool res;
     res = wm.autoConnect("StarON"); // password protected ap
@@ -41,7 +41,7 @@ void wmConfig(){
 // WebServer config
 ESP8266WebServer server(80); // Set web server port number to 80
 String streamerName="";
-String COLOR="";
+String cor ="";
 
 void hendleIndex() {  // send HTML to the page
     server.send(200, "text/html", postForms); // check HTML.h file
@@ -53,11 +53,13 @@ void handleGetParam() {
         streamerName = server.arg("STREAMER"); // get the streamer name and put on the streamerName variable
     }
     if (server.hasArg("COLOR")) {
-        streamerName = server.arg("COLOR"); // get the COLOR
+        cor = server.arg("COLOR"); // get the COLOR
     }
 
-    Serial.print("Stremaer Name - ");
-    Serial.println(streamerName);
+    Serial.println("Streamer Name - ");
+    Serial.print(streamerName);
+    Serial.print("cor:  ");
+    Serial.println(cor);
 }
 
 void handleNotFound() {
@@ -77,7 +79,7 @@ void handleNotFound() {
 
 
 //LED config
-#define PIN 2
+#define PIN 4
 #define NUMPIXELS 2 
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
@@ -102,19 +104,31 @@ void setup() {
     Serial.println("HTTP server started");
 
     //LED
+    Serial.println("TA ON");
     pixels.begin();
     pixels.clear();
     delay(500);
+    for (int i = 0 ; i< 5 ; i++){
+    pixels.setPixelColor(1, pixels.Color(254, 0, 153));
+    pixels.show();
+    delay(800);
+    pixels.clear();
+    pixels.show();
+    delay(800);
+    }
+ 
+
    
 }
 
-
  
 void loop() {
-  server.handleClient();
-  WiFiClientSecure client;
-  client.setInsecure();
   MDNS.update();
+  
+  WiFiClientSecure client;
+  server.handleClient();
+  client.setInsecure();
+
   if(streamerName != ""){
 
   if (!client.connect(host, port)) {
