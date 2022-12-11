@@ -80,7 +80,7 @@ bool handGetTwitchToken() {
     JSONVar json = JSON.parse(ss.str().c_str());
 
     access_token = String((const char*)json["access_token"]);
-    Serial.println(access_token);
+    //Serial.println(access_token);
     client.stop();
     return true;
 }

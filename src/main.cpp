@@ -17,8 +17,9 @@
 
 // LED config
 #define PIN 4
-#define NUMPIXELS 1
+#define NUMPIXELS 4
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
 
 // WifiManager config
 void wmConfig() {
@@ -60,10 +61,24 @@ void handleGetParam() {
     }
     if (server.hasArg("COLOR")) {
         cor = server.arg("COLOR");  // get the COLOR
+        cor = "0x"+cor;
     }
+    int number = (int) strtol( &incomingPacket[0], NULL, 16);
+    int vermelho = number >> 16;
+    int verde = number >> 8 & 0xFF;
+    int azul = number & 0xFF;
 
-    for (int i = 0; i < 3; i++) {
-        pixels.setPixelColor(0, atol(cor.c_str()));
+
+    struct RGB colorConverter(int hexValue) {
+       struct RGB rgbColor;
+        rgbColor.r = ((hexValue >> 16) & 0xFF) / 255.0; 
+        rgbColor.g = ((hexValue >> 8) & 0xFF) / 255.0; 
+        rgbColor.b = ((hexValue) & 0xFF) / 255.0; return rgbColor; }
+
+    for (int j = 0; j < 3; j++) {
+      for (int i =0 ; i <4; i++){
+          pixels.setPixelColor(i,(cor >> 16) & 0xFF) / 255.0));
+      }
         pixels.show();
         delay(200);
         pixels.clear();
@@ -75,6 +90,7 @@ void handleGetParam() {
     // Serial.print(streamerName);
     Serial.print("cor:  ");
     Serial.println(cor);
+    Serial.print(cor.toInt());
 }
 
 void handleNotFound() {
@@ -113,6 +129,7 @@ void setup() {
 
     pixels.begin();
     pixels.clear();
+    pixels.show();
 }
 
 uint32_t lasTimeUpdateLed;
@@ -128,7 +145,7 @@ void loop() {
         // Serial.println("Recebendo stream data");
         // Serial.println(response);
         if (streamerIsOn(streamerName)) {
-            pixels.setPixelColor(0, atol(cor.c_str()));
+            pixels.setPixelColor(1, atol(cor.c_str()));
             pixels.show();
             Serial.println("TA ON");
         } else {
