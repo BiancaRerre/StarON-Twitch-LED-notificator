@@ -1,8 +1,22 @@
 const char postForms[] PROGMEM = R"===(
-  <html lang="pt-BR">
-<head>
+    <html lang="pt-BR">
+<head> 
   <title>⭐StarOn</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
+  <link rel="stylesheet" href="style.css"> 
 </head>
+<style>      
+body{
+  color:#fff;
+    background: #20293c;
+    min-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+
+
 <body>
   
    <div class="quadrado"><div>
@@ -10,11 +24,11 @@ const char postForms[] PROGMEM = R"===(
 
   <div>
   <H1 id="logo"></h1><br>
-    <h2>canal<h2>
-    <input class="canal" id="canal" type="text" name="STREAMER">
+    <h2 id="info">canal<br><h2>
+    <input class="canal" id="canal" type="text" name="STREAMER" onkeydown = "if (event.keyCode == 13) document.getElementById('botao').click()">
      
       <div class="color-picker"></div>
-      <input class="botao" type="submit" value="SALVAR" onclick="salvar();">
+      <input class="botao" id="botao" type="submit" value="SALVAR" onclick="salvar();">
       <BR>
       
     <meta charset="UTF-8">
@@ -32,7 +46,7 @@ const char postForms[] PROGMEM = R"===(
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
     <script>
-      let cor// variavel color
+      let cor ="#ffffff"// variavel color
       
         let colorIndicator = document.getElementById('color-indicator');
         const colorPicker = new iro.ColorPicker("#color-picker", {
@@ -50,8 +64,8 @@ const char postForms[] PROGMEM = R"===(
    <path style="fill:none;stroke-width:18;stroke-linecap:square;stroke-linejoin:round;stroke:${color.hexString};stroke-opacity:1;stroke-miterlimit:4;" d="M 270.504023 119.495536 C 261.329531 120.411033 252.145781 121.317283 243.498984 129.501276 C 234.852188 137.67602 226.723828 153.128508 229.501172 168.497768 C 232.278516 183.876276 245.952305 199.171556 261.496172 203.499362 C 277.049297 207.827168 294.463242 201.196747 304.498711 190.497449 C 314.543438 179.807398 317.20043 165.039222 313.497305 152.499681 C 309.79418 139.96014 299.730938 129.63074 291.500742 124.498406 C 283.270547 119.366071 276.882656 119.430804 270.504023 119.495536 " transform="matrix(0.421941,0,0,0.422414,0,0)"/>
     </g>
     </svg>`
-                  
-       console.log(color.hexString); 
+    console.log("R:"+hexToRgb(color.hexString).r+"  "+"G:"+hexToRgb(color.hexString).g+"  "+"B:"+hexToRgb(color.hexString).b+"  "+color.hexString)
+    
           
         });
 
@@ -65,151 +79,50 @@ const char postForms[] PROGMEM = R"===(
     </svg>`
 
     function salvar(){ // ao clicar no botão de salvar 
-      `/?STREAMER=${document.getElementById('canal').value}&COLOR=${cor.slice(1)}`
-      console.log("")
-      console.log(`GET /?STREAMER=${document.getElementById('canal').value}&COLOR=${cor.slice(1)}`)
-      console.log("Cor enviada: "+cor.slice(1))
-      console.log("Canal enviado: "+document.getElementById('canal').value)
-      console.log("")
+    document.getElementById("info").innerHTML = `<div class="spinner">
+  <div class="bounce1"></div>
+  <div class="bounce2"></div>
+  <div class="bounce3"></div>
+</div>`
+  
+      
 
       var xmlhttp = new XMLHttpRequest();
-             xmlhttp.open("GET", `/getName?STREAMER=${document.getElementById('canal').value}&COLOR=${cor.slice(1)}`);
-             xmlhttp.send();
-      
-      
+             xmlhttp.open("GET", `/getname?slot=1&canal=${document.getElementById('canal').value}&STREAMER=${document.getElementById('canal').value}&cor=${cor.slice(1)}&r=${hexToRgb(cor).r}&g=${hexToRgb(cor).g}&b=${hexToRgb(cor).b}`);
+             xmlhttp.send(null);
+              console.log("----------------------------------------")
+              console.log("Cor enviada: "+"R:"+hexToRgb(cor).r+"  "+"G:"+hexToRgb(cor).g+"  "+"B:"+hexToRgb(cor).b+cor.slice(1))
+              console.log("Canal enviado: "+document.getElementById('canal').value)
+              console.log("----------------------------------------")
+              
+         
+      if (navigator.userAgent.indexOf("Firefox") != -1) { // abortar se for firefox
+        setTimeout(function(){ xmlhttp.abort(); atualizar2(); }, 2000);         
+      }
+     
+    
     }
 
+  function hexToRgb(hex) {
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+console.log(hexToRgb('#ff55cc'))
+
     </script>
-   </div>
+   </div> </div>
+   <div id="rodape">Design by <rerre>Bianca Rerre</rerre></div>
+  <script type="text/javascript" src="/js"></script>
 </body>
 </html>
-    <style>
-      
-      
-body{
-  color:#fff;
-    background: #20293c;
-    min-height: 90vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  
-}
-.color-picker{
-    position: relative;
-}
-.color-indicator{
-    display: inline-block;
-    width: 7em;
-    height: 7em;
-    border-bottom: 10px;
-    background-color: #fff;
-    border-radius: 10px;
-    vertical-align: middle;
-}
-#color-picker{
-  margin-top: 15px;
-  display: inline-block;  
-  vertical-align: middle;
-  margin-left: 0px;
-}
 
-#prendecores{
-  display: inline-block;  
-  vertical-align: middle;
-  width: 20em;
-}
-
-
-.footer {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 1rem;
-  background-color: #000;
-  text-align: center;
-}
-.footer p {
-text-decoration: none;
-color: #fff;
-}
-.footer a {
-  text-decoration: none;
-  color: red;
-}
-.footer a:hover {
-  text-decoration: underline;
-  color: blue;
-}
-h2{
-   color:#ff00bf;
-   text-align: center;
-    align-items: center;
-}
-.canal{
-   text-shadow: 0px 0px 2px #000;
-   
-  text-align: center;
-  font-size: 20px;
-   color:#ff00bf;
-  background: #20293c;
-  border-radius: 5px;
-   border-width: thin;
-   border-color: #ff00bf;
-   width: 10.5em;
-   height:1.6em;
-  
-}
-.quadrado{
-  padding-top: 5vh;
-  padding-bottom: 5vh;
-  background: #242E42;
-  border-radius: 25px;
-  width: 70vw;
-}
-.botao{
-  margin-top: 5vh;
-  margin-bottom: 5vh;
-  font-size: 20px;
-  color:#fff;
-  background: #ff00bf;
-  border-radius: 5px;
-   border-width: 2px;
-    width: 10.5em;
-   height:1.6em;
-   border-color: #ff00bf;
-}
-
-
-@media only screen and (max-width: 680px) {
-  .quadrado{
-  padding-top: 5vh;
-  padding-bottom: 5vh;
-  background: #242E42;
-  border-radius: 25px;
-  width: 90vw;
-}
-#prendecores{
-  display: inline-block;  
-  vertical-align: middle;
-  width: 9em;
-
-}
-.botao{
-  margin-top: 5vh;
-  margin-bottom: 5vh;
-}
-.color-indicator{
-    display: inline-block;
-    width: 0em;
-    height: 50px;
-    border-bottom: 10px;
-    background-color: #fff;
-    border-radius: 10px;
-    vertical-align: middle;
-}
- 
-}
-</style>
 )===";
