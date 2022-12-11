@@ -107,7 +107,7 @@ bool handStreamerIsOn(String streamerName) {
     if (!client.connect("api.twitch.tv", port)) {
         Serial.println("2 connection failed");
         Serial.println("wait 5 sec...");
-        delay(5000);
+      
         return false;
     }
 
@@ -136,13 +136,17 @@ bool handStreamerIsOn(String streamerName) {
             }
         }
     }
-    return response.length() > 27;
+    Serial.println(response);//
+    Serial.println(response.length());//
+    return response.length() > 100;
+    response = "";    
 }
 
 bool streamerIsOn(String streamerName) {
     if (getTwitchToken()) {
         if ((millis() - latTimeGetStreamerOn) < 3000) return isStreamerOn;
         isStreamerOn = handStreamerIsOn(streamerName);
+        
         latTimeGetStreamerOn = millis();
         return isStreamerOn;
     }
