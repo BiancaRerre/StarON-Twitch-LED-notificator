@@ -23,7 +23,7 @@ bool isStreamerOn = false;
 bool awaitTimeOut(WiFiClientSecure* client) {
     // read back one line from server
     // Serial.println("receiving from remote server");
-    delay(500);
+   // delay(500);
     unsigned long timeout = millis();
     while (client->available() == 0) {
         if (millis() - timeout > 5000) {
@@ -102,12 +102,12 @@ bool getTwitchToken() {
 bool handStreamerIsOn(String streamerName) {
     client.stop();
     client.setInsecure();
-    delay(100);
+    delay(50);
 
     if (!client.connect("api.twitch.tv", port)) {
         Serial.println("2 connection failed");
         Serial.println("wait 5 sec...");
-        delay(5000);
+       // delay(5000);
         return false;
     }
 
@@ -124,19 +124,20 @@ bool handStreamerIsOn(String streamerName) {
 
     if (awaitTimeOut(&client)) return 0;
 
+    std::stringstream ss;
     bool capturing = false;
-    String response = "";
     while (client.available()) {
         char ch = static_cast<char>(client.read());
         if (ch == '{' || capturing == true || ch == '}') {
             capturing = true;
-            response.concat(ch);
+            ss << ch;
             if (ch == '}') {
                 capturing = false;
             }
         }
     }
-    return response.length() > 27;
+
+    return ss.str().length() > 27;
 }
 
 bool streamerIsOn(String streamerName) {

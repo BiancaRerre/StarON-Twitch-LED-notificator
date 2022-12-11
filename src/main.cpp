@@ -7,18 +7,21 @@
 #include <ESP8266mDNS.h>
 #endif
 #include <WiFiManager.h>  // https://github.com/tzapu/WiFiManager
-
+	
 #include <cstring>
 #include <sstream>
 #include <string>
 
 #include "./HTML.h"
+#include "./style.h"
+#include "./js.h"
 #include "./twitch.hpp"
 
 // LED config
 #define PIN 4
 #define NUMPIXELS 4
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+int status = 0;
 
 
 // WifiManager config
@@ -49,19 +52,47 @@ ESP8266WebServer server(80);  // Set web server port number to 80
 #endif
 String streamerName = "";
 String cor = "";
+int corR = 0;
+int corG = 0;
+int corB = 0;
 
 void hendleIndex() {                           // send HTML to the page
+    Serial.println("GET /");
     server.send(200, "text/html", postForms);  // check HTML.h file
 }
 
+void handleStyle() {                           // send HTML to the page
+    Serial.println("GET /style.css");
+    server.send(200, "text/css", style);  // check HTML.h file
+}
+
+void handlejs() {                           // send HTML to the page
+    Serial.println("GET /js");
+    server.send(200, "application/javascript", js);  // check HTML.h file
+}
+
+
+void handleStatus() {                           // send JSON to the page
+//jsonstatus = "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]";   
+    Serial.println("GET /staus");
+    server.send(200, "application/json", "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]"); 
+}
+
+
 void handleGetParam() {
+
     if (server.hasArg("STREAMER")) {
         streamerName = server.arg("STREAMER");  // get the streamer name and put
                                                 // on the streamerName variable
     }
+<<<<<<< HEAD
     if (server.hasArg("COLOR")) {
         cor = server.arg("COLOR");  // get the COLOR
         cor = "0x"+cor;
+=======
+    if (server.hasArg("cor")) {
+        cor = server.arg("cor");  // get the COLOR
+>>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
     }
     int number = (int) strtol( &incomingPacket[0], NULL, 16);
     int vermelho = number >> 16;
@@ -69,6 +100,7 @@ void handleGetParam() {
     int azul = number & 0xFF;
 
 
+<<<<<<< HEAD
     struct RGB colorConverter(int hexValue) {
        struct RGB rgbColor;
         rgbColor.r = ((hexValue >> 16) & 0xFF) / 255.0; 
@@ -79,18 +111,48 @@ void handleGetParam() {
       for (int i =0 ; i <4; i++){
           pixels.setPixelColor(i,(cor >> 16) & 0xFF) / 255.0));
       }
+=======
+     if (server.hasArg("r")) {
+        corR = server.arg("r").toInt();  // get the COLOR
+        Serial.println(corR);
+    }
+     if (server.hasArg("g")) {
+        corG = server.arg("g").toInt();  // get the COLOR
+        Serial.println(corG);
+    }
+
+ if (server.hasArg("b")) {
+        corB = server.arg("b").toInt();  // get the COLOR
+        Serial.println(corB);
+    }
+
+
+
+
+    for (int i = 0; i < 3; i++) {
+        pixels.setPixelColor(0, corR, corG, corB);
+>>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
         pixels.show();
         delay(200);
         pixels.clear();
         pixels.show();
         delay(200);
     }
+  Serial.println("GET /getname");
+    Serial.print("Streamer: ");
+    Serial.print(streamerName);
+    Serial.print(" - ");
+    Serial.print("color: " + cor + " rgb("+server.arg("r")+", "+server.arg("g")+", "+server.arg("b")+")");
+    Serial.println("");
 
+<<<<<<< HEAD
     // Serial.println("Streamer Name - ");
     // Serial.print(streamerName);
     Serial.print("cor:  ");
     Serial.println(cor);
     Serial.print(cor.toInt());
+=======
+>>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
 }
 
 void handleNotFound() {
@@ -105,7 +167,7 @@ void handleNotFound() {
     for (uint8_t i = 0; i < server.args(); i++) {
         message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
     }
-    server.send(404, "text/plain", message);
+    server.send(200, "text/html", message);  // check HTML.h file
 }
 
 void setup() {
@@ -120,7 +182,10 @@ void setup() {
     WiFi.hostname("starOn");
 
     server.on("/", hendleIndex);
-    server.on("/getName", handleGetParam);
+    server.on("/getname", handleGetParam);
+    server.on("/style.css", handleStyle);
+    server.on("/status", handleStatus);
+    server.on("/js", handlejs);
     server.onNotFound(handleNotFound);
     server.begin();
     // Serial.println("HTTP server started");
@@ -145,16 +210,26 @@ void loop() {
         // Serial.println("Recebendo stream data");
         // Serial.println(response);
         if (streamerIsOn(streamerName)) {
+<<<<<<< HEAD
             pixels.setPixelColor(1, atol(cor.c_str()));
             pixels.show();
+=======
+            server.handleClient();
+            pixels.setPixelColor(0, corR, corG, corB); //definir cor dos leds
+            pixels.show(); //aplicar alterações nos leds
+>>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
             Serial.println("TA ON");
+            status = 1;
         } else {
-            pixels.clear();
-            pixels.show();
+            server.handleClient();
+            pixels.clear();//definir que quer apagar leds
+            pixels.show(); //aplicar alterações nos leds
             Serial.println("TA OFF");
+            status = 0;
         }
         lasTimeUpdateLed = millis();
         // Serial.println("wait 5 sec...");
         // delay(5000);
     }
+ 
 }
