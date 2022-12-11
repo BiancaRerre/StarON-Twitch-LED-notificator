@@ -13,12 +13,15 @@
 #include <string>
 
 #include "./HTML.h"
+#include "./style.h"
+#include "./js.h"
 #include "./twitch.hpp"
 
 // LED config
 #define PIN 4
 #define NUMPIXELS 1
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+int status = 0;
 
 // WifiManager config
 void wmConfig() {
@@ -48,33 +51,76 @@ ESP8266WebServer server(80);  // Set web server port number to 80
 #endif
 String streamerName = "";
 String cor = "";
+int corR = 0;
+int corG = 0;
+int corB = 0;
 
 void hendleIndex() {                           // send HTML to the page
+    Serial.println("GET /");
     server.send(200, "text/html", postForms);  // check HTML.h file
 }
 
+void handleStyle() {                           // send HTML to the page
+    Serial.println("GET /style.css");
+    server.send(200, "text/css", style);  // check HTML.h file
+}
+
+void handlejs() {                           // send HTML to the page
+    Serial.println("GET /js");
+    server.send(200, "application/javascript", js);  // check HTML.h file
+}
+
+
+void handleStatus() {                           // send JSON to the page
+//jsonstatus = "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]";   
+    Serial.println("GET /staus");
+    server.send(200, "application/json", "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]"); 
+}
+
+
 void handleGetParam() {
+
     if (server.hasArg("STREAMER")) {
         streamerName = server.arg("STREAMER");  // get the streamer name and put
                                                 // on the streamerName variable
     }
-    if (server.hasArg("COLOR")) {
-        cor = server.arg("COLOR");  // get the COLOR
+    if (server.hasArg("cor")) {
+        cor = server.arg("cor");  // get the COLOR
     }
 
+
+     if (server.hasArg("r")) {
+        corR = server.arg("r").toInt();  // get the COLOR
+        Serial.println(corR);
+    }
+     if (server.hasArg("g")) {
+        corG = server.arg("g").toInt();  // get the COLOR
+        Serial.println(corG);
+    }
+
+ if (server.hasArg("b")) {
+        corB = server.arg("b").toInt();  // get the COLOR
+        Serial.println(corB);
+    }
+
+
+
+
     for (int i = 0; i < 3; i++) {
-        pixels.setPixelColor(0, atol(cor.c_str()));
+        pixels.setPixelColor(0, corR, corG, corB);
         pixels.show();
         delay(200);
         pixels.clear();
         pixels.show();
         delay(200);
     }
+  Serial.println("GET /getname");
+    Serial.print("Streamer: ");
+    Serial.print(streamerName);
+    Serial.print(" - ");
+    Serial.print("color: " + cor + " rgb("+server.arg("r")+", "+server.arg("g")+", "+server.arg("b")+")");
+    Serial.println("");
 
-    // Serial.println("Streamer Name - ");
-    // Serial.print(streamerName);
-    Serial.print("cor:  ");
-    Serial.println(cor);
 }
 
 void handleNotFound() {
@@ -89,7 +135,7 @@ void handleNotFound() {
     for (uint8_t i = 0; i < server.args(); i++) {
         message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
     }
-    server.send(404, "text/plain", message);
+    server.send(200, "text/html", message);  // check HTML.h file
 }
 
 void setup() {
@@ -104,7 +150,10 @@ void setup() {
     WiFi.hostname("starOn");
 
     server.on("/", hendleIndex);
-    server.on("/getName", handleGetParam);
+    server.on("/getname", handleGetParam);
+    server.on("/style.css", handleStyle);
+    server.on("/status", handleStatus);
+    server.on("/js", handlejs);
     server.onNotFound(handleNotFound);
     server.begin();
     // Serial.println("HTTP server started");
@@ -128,16 +177,19 @@ void loop() {
         // Serial.println("Recebendo stream data");
         // Serial.println(response);
         if (streamerIsOn(streamerName)) {
-            pixels.setPixelColor(0, atol(cor.c_str()));
+            pixels.setPixelColor(0, corR, corG, corB);
             pixels.show();
             Serial.println("TA ON");
+            status = 1;
         } else {
             pixels.clear();
             pixels.show();
             Serial.println("TA OFF");
+            status = 0;
         }
         lasTimeUpdateLed = millis();
         // Serial.println("wait 5 sec...");
         // delay(5000);
     }
+ 
 }
