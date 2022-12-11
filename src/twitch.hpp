@@ -124,19 +124,20 @@ bool handStreamerIsOn(String streamerName) {
 
     if (awaitTimeOut(&client)) return 0;
 
+    std::stringstream ss;
     bool capturing = false;
-    String response = "";
     while (client.available()) {
         char ch = static_cast<char>(client.read());
         if (ch == '{' || capturing == true || ch == '}') {
             capturing = true;
-            response.concat(ch);
+            ss << ch;
             if (ch == '}') {
                 capturing = false;
             }
         }
     }
-    return response.length() > 27;
+
+    return ss.str().length() > 100;
 }
 
 bool streamerIsOn(String streamerName) {
