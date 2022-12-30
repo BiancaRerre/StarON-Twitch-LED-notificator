@@ -1,4 +1,121 @@
 char style[] PROGMEM = R"===(
+#check{
+
+    display: none;
+
+}
+
+.barra{
+width:200px;
+height: 400px;
+border-radius: 25px;
+  padding:1px;
+  
+	position: absolute;
+
+  background-color: #ff00bf;
+
+	
+
+	
+
+		transition: all .2s linear;
+
+	left: -300px;
+
+}
+
+
+
+nav{
+
+	width: 200px;
+
+	position: absolute;
+
+	top: 60px;
+
+}
+
+
+
+nav a{
+
+	text-decoration: none;
+
+}
+
+
+
+#icone{
+
+	cursor: pointer;
+
+	padding: 4px;
+
+	position: absolute;
+
+	z-index: ;
+
+}
+
+
+
+#imgmenu{
+
+  cursor: pointer;
+
+	padding: 10px;
+
+	position: absolute;
+
+	z-index: 1;
+
+  height: 100%;
+
+}
+
+
+
+.link{
+
+	background-color: #0000;
+
+	padding: 20px;
+
+	font-size: 12pt;
+
+	font-family: "Arial";
+
+	transition: all .2s linear;
+
+	color:  #f4f4f9;
+
+	border-bottom: 2px solid #FFFFFFCC;
+
+}
+
+
+
+.link:hover{
+
+	background-color: #050542;
+
+
+
+}
+
+
+
+#check:checked ~ .barra{
+
+	transform: translateX(300px);
+
+
+
+}
+
+
 .color-picker{
     position: relative;
 }
