@@ -79,29 +79,58 @@ void handleStatus() {                           // send JSON to the page
     server.send(200, "application/json", "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]"); 
 }
 
-
 void handleGetParam() {
 
-    if (server.hasArg("STREAMER")) {
+      if (server.hasArg("STREAMER")) {
+      if(!server.arg("STREAMER").equalsIgnoreCase(streamerName)){
         streamerName = server.arg("STREAMER");  // get the streamer name and put
                                                 // on the streamerName variable
+    }                       
     }
-    if (server.hasArg("COLOR")) {
-        cor = server.arg("COLOR");  // get the COLOR
-        cor = "0x"+cor;}
     if (server.hasArg("cor")) {
+        
+        if(!server.arg("cor").equalsIgnoreCase(cor)){
         cor = server.arg("cor");  // get the COLOR
+
+    }       
     }
-    pixels.fill(pixels.Color(100,100,100),0);
-    Serial.println("GET /getname");
+
+    if (server.hasArg("r")) {
+      if(corR != server.arg("r").toInt()){
+        corR = server.arg("r").toInt();  // get the COLOR
+        Serial.print(" Salvando R: "+corR);
+
+        }
+    }
+    if (server.hasArg("g")) {
+           if(corG != server.arg("g").toInt()){
+        corG = server.arg("g").toInt();  // get the COLOR
+        Serial.print(" Salvando G: "+corG);
+
+        }
+    }
+    if (server.hasArg("b")) {
+          if(corB != server.arg("b").toInt()){
+        corB = server.arg("b").toInt();  // get the COLOR
+        Serial.print(" Salvando B: "+corB);
+
+        }
+    }
+
+    for(int i = 0 ; i<3 ; i++){
+    pixels.fill(pixels.Color(corR,corG,corB),0);
+    pixels.show();
+    delay(500);
+    pixels.clear();
+    pixels.show();
+    delay(500);
+    }
     Serial.print("Streamer: ");
     Serial.print(streamerName);
-
-
-    // Serial.println("Streamer Name - ");
-    // Serial.print(streamerName);
-    Serial.print("cor:  ");
-    Serial.println(cor);
+    Serial.print(" - ");
+    Serial.println("color: " + cor + " rgb(" + server.arg("r") + ", " +
+                 server.arg("g") + ", " + server.arg("b")+")");                        
+    
 }
 
 void handleNotFound() {
