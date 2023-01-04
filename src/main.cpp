@@ -1,4 +1,5 @@
 #include <Adafruit_NeoPixel.h>
+
 #ifdef ESP32
 #include <ESPmDNS.h>
 #include <WebServer.h>
@@ -85,74 +86,22 @@ void handleGetParam() {
         streamerName = server.arg("STREAMER");  // get the streamer name and put
                                                 // on the streamerName variable
     }
-<<<<<<< HEAD
     if (server.hasArg("COLOR")) {
         cor = server.arg("COLOR");  // get the COLOR
-        cor = "0x"+cor;
-=======
+        cor = "0x"+cor;}
     if (server.hasArg("cor")) {
         cor = server.arg("cor");  // get the COLOR
->>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
     }
-    int number = (int) strtol( &incomingPacket[0], NULL, 16);
-    int vermelho = number >> 16;
-    int verde = number >> 8 & 0xFF;
-    int azul = number & 0xFF;
-
-
-<<<<<<< HEAD
-    struct RGB colorConverter(int hexValue) {
-       struct RGB rgbColor;
-        rgbColor.r = ((hexValue >> 16) & 0xFF) / 255.0; 
-        rgbColor.g = ((hexValue >> 8) & 0xFF) / 255.0; 
-        rgbColor.b = ((hexValue) & 0xFF) / 255.0; return rgbColor; }
-
-    for (int j = 0; j < 3; j++) {
-      for (int i =0 ; i <4; i++){
-          pixels.setPixelColor(i,(cor >> 16) & 0xFF) / 255.0));
-      }
-=======
-     if (server.hasArg("r")) {
-        corR = server.arg("r").toInt();  // get the COLOR
-        Serial.println(corR);
-    }
-     if (server.hasArg("g")) {
-        corG = server.arg("g").toInt();  // get the COLOR
-        Serial.println(corG);
-    }
-
- if (server.hasArg("b")) {
-        corB = server.arg("b").toInt();  // get the COLOR
-        Serial.println(corB);
-    }
-
-
-
-
-    for (int i = 0; i < 3; i++) {
-        pixels.setPixelColor(0, corR, corG, corB);
->>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
-        pixels.show();
-        delay(200);
-        pixels.clear();
-        pixels.show();
-        delay(200);
-    }
-  Serial.println("GET /getname");
+    pixels.fill(pixels.Color(100,100,100),0);
+    Serial.println("GET /getname");
     Serial.print("Streamer: ");
     Serial.print(streamerName);
-    Serial.print(" - ");
-    Serial.print("color: " + cor + " rgb("+server.arg("r")+", "+server.arg("g")+", "+server.arg("b")+")");
-    Serial.println("");
 
-<<<<<<< HEAD
+
     // Serial.println("Streamer Name - ");
     // Serial.print(streamerName);
     Serial.print("cor:  ");
     Serial.println(cor);
-    Serial.print(cor.toInt());
-=======
->>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
 }
 
 void handleNotFound() {
@@ -210,14 +159,11 @@ void loop() {
         // Serial.println("Recebendo stream data");
         // Serial.println(response);
         if (streamerIsOn(streamerName)) {
-<<<<<<< HEAD
             pixels.setPixelColor(1, atol(cor.c_str()));
             pixels.show();
-=======
             server.handleClient();
             pixels.setPixelColor(0, corR, corG, corB); //definir cor dos leds
             pixels.show(); //aplicar alterações nos leds
->>>>>>> 06e748c06b96ee3facc64c6f04671c1270c1d10f
             Serial.println("TA ON");
             status = 1;
         } else {
