@@ -24,6 +24,9 @@ String clientId;
 //#include "./credencials.h"
 #include "./credenciaisHTML.h"
 
+char* readData(const char* name);
+void handlecredenciais();
+
 String EEPROM_read(int index, int length) {
     String text = "";
     char ch = 1;
