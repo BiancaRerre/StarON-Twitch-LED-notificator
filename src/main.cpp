@@ -1,4 +1,5 @@
 #include <Adafruit_NeoPixel.h>
+#include <Preferences.h>
 
 #ifdef ESP32
 #include <ESPmDNS.h>
@@ -18,11 +19,78 @@
 #include "./js.h"
 #include "./twitch.hpp"
 
+//#include "./credencials.h"
+#include "./credenciaisHTML.h"
+char* readData(const char* name);
+void handlecredenciais();
+
 // LED config
 #define PIN 4
 #define NUMPIXELS 4
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 int status = 0;
+
+#include <ArduinoJson.h>
+#include <EEPROM.h>
+#define EEPROM_SIZE 512
+int metaAddress = 0;
+int metaLenght = 4;
+int jsonAddress = 4;
+String EEPROM_read(int index, int length) {
+    String text = "";
+    char ch = 1;
+
+    for (int i = index; (i < (index + length)) && ch; ++i) {
+        if (ch = EEPROM.read(i)) {
+            text.concat(ch);
+        }
+    }
+    return text;
+}
+
+int EEPROM_write(int index, String text) {
+    for (int i = index; i < text.length() + index; ++i) {
+        EEPROM.write(i, text[i - index]);
+    }
+    EEPROM.write(index + text.length(), 0);
+    EEPROM.commit();
+    Serial.println("alterações foram salvas na memoria!");
+
+    return text.length() + 1;
+}
+
+DynamicJsonDocument getEEPROM_JSON() {
+    String jsonRead =
+        EEPROM_read(jsonAddress, EEPROM_read(metaAddress, metaLenght).toInt());
+
+    Serial.print("Dados salvos: ");
+    Serial.print("Streamer: "+String(readData("STREAMER")));
+    Serial.print(" RGB("+String(readData("R"))+",");
+   Serial.print( String(readData("G"))+","+String(readData("B"))+") cor: #"+String(readData("cor")));
+
+    DynamicJsonDocument jsonDoc(EEPROM_SIZE);
+
+    deserializeJson(jsonDoc, jsonRead);
+
+    return jsonDoc;
+}
+
+void setEEPROM_JSON(DynamicJsonDocument jsonDoc) {
+    String jsonWriteString;
+
+    serializeJson(jsonDoc, jsonWriteString);
+
+    Serial.print("JSON Write: ");
+    Serial.println(jsonWriteString);
+
+    EEPROM_write(metaAddress,
+                 (String)EEPROM_write(jsonAddress, jsonWriteString));
+}
+
+
+
+
+
 
 
 // WifiManager config
@@ -56,6 +124,8 @@ String cor = "";
 int corR = 0;
 int corG = 0;
 int corB = 0;
+String userName = "null";
+int modo = 0;
 
 void hendleIndex() {                           // send HTML to the page
     Serial.println("GET /");
@@ -73,10 +143,28 @@ void handlejs() {                           // send HTML to the page
 }
 
 
-void handleStatus() {                           // send JSON to the page
-//jsonstatus = "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]";   
+void handleStatus() {  // send JSON to the page
+                       // jsonstatus =
+    // "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]";
     Serial.println("GET /staus");
-    server.send(200, "application/json", "[{\"canal\":\""+streamerName+"\",\"color\":\""+cor+"\",\"status\":\""+status+"\"}]"); 
+    DynamicJsonDocument jsonDoc = getEEPROM_JSON();
+    const char *readcanal = jsonDoc["canal"];
+    const char *readcor = jsonDoc["cor"];
+    // int r = jsonDoc["rgb"][0];
+    // int g = jsonDoc["rgb"][1];
+    // int b = jsonDoc["rgb"][2];
+if(streamerName.equalsIgnoreCase(userName)){
+    server.send(200, "application/json",
+                "[{\"canal\":\"" +String(readData("STREAMER"))+ "\",\"color\":\"" +
+                    String(readData("cor")) + "\",\"status\":\"" + status + "\"}]");
+}
+else{
+    server.send(200, "application/json",
+                "[{\"canal\":\"" + String(readData("STREAMER")) + "\",\"color\":\"" +
+                    String(readData("cor")) + "\",\"status\":\"" + status + "\"}]");
+
+}
+
 }
 
 void handleGetParam() {
@@ -116,7 +204,8 @@ void handleGetParam() {
 
         }
     }
-
+    pixels.clear();
+    pixels.show();
     for(int i = 0 ; i<3 ; i++){
     pixels.fill(pixels.Color(corR,corG,corB),0);
     pixels.show();

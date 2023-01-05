@@ -17,13 +17,11 @@ char style[] PROGMEM = R"===(
   vertical-align: middle;
   margin-left: 0px;
 }
-
 #prendecores{
   display: inline-block;  
   vertical-align: middle;
   width: 20em;
 }
-
 #rodape{
   color: #1e2737;
   
@@ -34,12 +32,10 @@ char style[] PROGMEM = R"===(
 text-align: right; 
 transition: color 1.3s;
 }
-
 #rodape:hover{
   color: #ff00bf;
 animation-duration: 1s;
 }
-
 .footer {
   position: absolute;
   right: 0;
@@ -85,7 +81,6 @@ h2{
   padding-bottom: 1vh;
   background: #242E42;
   border-radius: 25px;
-
   width: 70vw;
 }
 .botao{
@@ -99,49 +94,39 @@ h2{
     width: 10.5em;
    height:1.6em;
    border-color: #ff00bf;
-
 transition: box-shadow 1.1s;
 }
-
 .botao:active{
   box-shadow: 0px 0px 50px rgb(255, 000, 255);
-
 transition: box-shadow 0.1s;
 }
-
 /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
 .spinner {
   margin: 0 auto 0;
   width: 70px;
   text-align: center;
 }
-
 .spinner > div {
   width: 18px;
   height: 18px;
   background-color: #ff00bf;
-
   border-radius: 100%;
   display: inline-block;
   -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
   animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 }
-
 .spinner .bounce1 {
   -webkit-animation-delay: -0.32s;
   animation-delay: -0.32s;
 }
-
 .spinner .bounce2 {
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
 }
-
 @-webkit-keyframes sk-bouncedelay {
   0%, 80%, 100% { -webkit-transform: scale(0) }
   40% { -webkit-transform: scale(1.0) }
 }
-
 @keyframes sk-bouncedelay {
   0%, 80%, 100% { 
     -webkit-transform: scale(0);
@@ -151,9 +136,6 @@ transition: box-shadow 0.1s;
     transform: scale(1.0);
   }
 }
-
-
-
 @media only screen and (max-width: 680px) {
   .quadrado{
   padding-top: 5vh;
@@ -166,7 +148,6 @@ transition: box-shadow 0.1s;
   display: inline-block;  
   vertical-align: middle;
   width: 9em;
-
 }
 .botao{
   margin-top: 5vh;

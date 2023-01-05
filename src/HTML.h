@@ -2,6 +2,9 @@ const char postForms[] PROGMEM = R"===(
     <html lang="pt-BR">
 <head> 
   <title>⭐StarOn</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
   <link rel="stylesheet" href="style.css"> 
 </head>
@@ -20,20 +23,38 @@ body{
 <body>
   
    <div class="quadrado"><div>
+
+  <input type="checkbox" id="check">
+<label id="icone" for="check"><img id="imgmenu" src="https://rerre.net/icone.svg"></label>
+<div class="barra">
+<center><h3>Menu</center>
+
+	<nav>
+
+   	<a href=""><div class="link"><h3 id="ircanal">Ir para o canal</h3></div></a>
+
+		<a href="/credencial"><div class="link"><h3>Credencial</h3></div></a>
+        
+    <div class="link">   <div class="slidecontainer"><h3>Brilho:<br>
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+<br>
+</h3>
+		</div></div>
+	</nav>
+</div>
+
          
 
   <div>
   <H1 id="logo"></h1><br>
     <h2 id="info">canal<br><h2>
-    <input class="canal" id="canal" type="text" name="STREAMER" onkeydown = "if (event.keyCode == 13) document.getElementById('botao').click()">
+    <input class="canal" id="canal" type="text" maxlength="25" name="STREAMER" onkeydown = "if (event.keyCode == 13) document.getElementById('botao').click()">
      
       <div class="color-picker"></div>
       <input class="botao" id="botao" type="submit" value="SALVAR" onclick="salvar();">
       <BR>
       
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Color Picker 1</title>
     
       
@@ -88,7 +109,7 @@ body{
       
 
       var xmlhttp = new XMLHttpRequest();
-             xmlhttp.open("GET", `/getname?slot=1&canal=${document.getElementById('canal').value}&STREAMER=${document.getElementById('canal').value}&cor=${cor.slice(1)}&r=${hexToRgb(cor).r}&g=${hexToRgb(cor).g}&b=${hexToRgb(cor).b}`);
+             xmlhttp.open("GET", `/getname?slot=1&canal=${document.getElementById('canal').value.trim()}&STREAMER=${document.getElementById('canal').value}&cor=${cor.slice(1)}&r=${hexToRgb(cor).r}&g=${hexToRgb(cor).g}&b=${hexToRgb(cor).b}`);
              xmlhttp.send(null);
               console.log("----------------------------------------")
               console.log("Cor enviada: "+"R:"+hexToRgb(cor).r+"  "+"G:"+hexToRgb(cor).g+"  "+"B:"+hexToRgb(cor).b+cor.slice(1))

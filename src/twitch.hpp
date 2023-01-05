@@ -8,7 +8,8 @@
 #endif 
 #include <WiFiClientSecure.h>
 
-#include "./credencials.h"
+//#include "./credencials.h"
+#include "./credenciaisHTML.h"
 
 WiFiClientSecure client;
 // twitch connection
