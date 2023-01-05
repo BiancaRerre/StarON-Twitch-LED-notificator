@@ -59,7 +59,7 @@ DynamicJsonDocument getEEPROM_JSON() {
     Serial.print("Dados salvos: ");
     Serial.print("Streamer: "+String(readData("STREAMER")));
     Serial.print(" RGB("+String(readData("R"))+",");
-   Serial.print( String(readData("G"))+","+String(readData("B"))+") cor: #"+String(readData("cor")));
+   Serial.println( String(readData("G"))+","+String(readData("B"))+") cor: #"+String(readData("cor")));
 
     DynamicJsonDocument jsonDoc(EEPROM_SIZE);
 
@@ -98,7 +98,7 @@ void setEEPROM_JSON(DynamicJsonDocument jsonDoc) {
 #define LED_R 14
 #define LED_B 13
 #define LED_G 12
-#define GND D0
+#define GND 16
 #endif
 #define PIN 4
 #define NUMPIXELS 1
@@ -141,7 +141,7 @@ String userName = "null";
 int corR = 0;
 int corG = 0;
 int corB = 0;
-int modo = 0;
+int modo = 3; //0: led do esp, 1:led rgb comum, 2:led endereçável, 3:todos.
 
 
 
@@ -365,7 +365,7 @@ void setup() {
     pixels.begin();
     pixels.clear();
 
-    jsonDoc = getEEPROM_JSON();
+  // jsonDoc = getEEPROM_JSON();
     streamerName = String(readData("STREAMER"));;
     cor = String(readData("cor"));
    char* corRchar = readData("R");
@@ -373,10 +373,20 @@ void setup() {
    char* corBchar = readData("B");
    char* modochar = readData("modo");
 
+   Serial.print("cores salvas rgb: "+ String(readData("R"))+" "+ String(readData("G"))+" "+ String(readData("B")));
+   Serial.println();
+  
+
   corR = String(corRchar).toInt();
   corG = String(corGchar).toInt();
   corB = String(corBchar).toInt();
   modo = String(modochar).toInt();
+  Serial.println("cor salva:");
+  Serial.println(corR);
+  Serial.println(corG);
+  Serial.println(corB);
+  Serial.println("");
+  Serial.println(modo);
 
 
 //saveData("clientId","");
@@ -391,7 +401,7 @@ uint32_t lastTimeUdpdatePrintHeap = 0;
 void loop() {
     // Serial.print("testando");
 
-  if ((millis() - lastTimeUdpdatePrintHeap) > 400) {
+  if ((millis() - lastTimeUdpdatePrintHeap) > 13000) {
     Serial.print("Heap: ");
     Serial.println(ESP.getFreeHeap());
     lastTimeUdpdatePrintHeap = millis();
@@ -406,19 +416,32 @@ void loop() {
     if (streamerName != "" && (millis() - lasTimeUpdateLed) > 500) {
         // Serial.println("Recebendo stream data");
         // Serial.println(response);
-        if (streamerIsOn(streamerName)) {
+        if (streamerIsOn(streamerName)) {// SE O STREAMER  ESTIVER EM LIVE
             server.handleClient();
-
-            analogWrite(LED_R, corR);
-            analogWrite(LED_G, corG);
-            analogWrite(LED_B, corB);
-            digitalWrite(GND, 0);
-
-            pixels.setPixelColor(0, corR, corG, corB);  // definir cor dos leds
+          //  if(modo == 0 || modo == 3){
+            digitalWrite(LED_BUILTIN, 1);// ACENDER O LED DO ESP 
+              digitalWrite(LED_BUILTIN, 0);// ACENDER O LED DO ESP 
+          //  }
+          //  if(modo == 1 || modo == 3){
+              analogWrite(LED_R, String(readData("R")).toInt());// SETAR A COR DO LED RGB COMUM
+              analogWrite(LED_G, String(readData("G")).toInt());// SETAR A COR DO LED RGB COMUM
+              analogWrite(LED_B, String(readData("B")).toInt());// SETAR A COR DO LED RGB COMUM
+              digitalWrite(GND, 0);
+          //  }
+          //  if(modo == 2 || modo == 3){
+            //SETAR A COR DO LED ENDEREÇÁVEL
+            pixels.setPixelColor(0, String(readData("R")).toInt(), String(readData("G")).toInt(), String(readData("B")).toInt());  // definir cor dos leds
             pixels.show();  // aplicar alterações nos leds
+          //  }
             Serial.println("TA ON");
+          //  Serial.println(String(readData("R")).toInt());
+          //  Serial.println(String(readData("G")).toInt());
+          //  Serial.println(String(readData("B")).toInt());
+          //  Serial.println(digitalRead(GND));
             status = 1;
-            digitalWrite(LED_BUILTIN, 0);
+            
+            
+
         } else {
             analogWrite(LED_R, 0);
             analogWrite(LED_G, 0);
