@@ -1,4 +1,4 @@
-# StarON
+# StarON ⭐
 
 StarON é um projeto de cubo LED que acende quando um streamer da Twitch está online. Ele foi criado para ESP8266 e ESP32 e pode ser alimentado via USB. Quando ligado pela primeira vez, o StarON irá solicitar um "Client ID" e "Client Secret" da API da Twitch, que você pode obter criando uma nova aplicação na [Twitch Developers Console](https://dev.twitch.tv/console/apps/create).
 
