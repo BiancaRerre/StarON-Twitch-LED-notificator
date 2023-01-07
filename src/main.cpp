@@ -570,4 +570,3 @@ void handlecredenciais() {  // send HTML to the page
 
 }
 
-
