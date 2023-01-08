@@ -13,6 +13,7 @@
 int metaAddress = 0;
 int metaLenght = 4;
 int jsonAddress = 4;
+int slot;
 
 #include <Preferences.h>
 #include <string.h>
@@ -57,9 +58,9 @@ DynamicJsonDocument getEEPROM_JSON() {
         EEPROM_read(jsonAddress, EEPROM_read(metaAddress, metaLenght).toInt());
 
     Serial.print("Dados salvos: ");
-    Serial.print("Streamer: "+String(readData("STREAMER")));
-    Serial.print(" RGB("+String(readData("R"))+",");
-   Serial.println( String(readData("G"))+","+String(readData("B"))+") cor: #"+String(readData("cor")));
+    Serial.print("Streamer: "+String(readData("STREAMER1")));
+    Serial.print(" RGB("+String(readData("R1"))+",");
+   Serial.println( String(readData("G1"))+","+String(readData("B1"))+") cor: #"+String(readData("cor1")));
 
     DynamicJsonDocument jsonDoc(EEPROM_SIZE);
 
@@ -167,13 +168,13 @@ void handleStatus() {  // send JSON to the page
     // int b = jsonDoc["rgb"][2];
 if(streamerName.equalsIgnoreCase(userName)){
     server.send(200, "application/json",
-                "[{\"canal\":\"" +String(readData("STREAMER"))+ "\",\"color\":\"" +
-                    String(readData("cor")) + "\",\"status\":\"" + status + "\"}]");
+                "[{\"canal\":\"" +String(readData("STREAMER1"))+ "\",\"color\":\"" +
+                    String(readData("cor1")) + "\",\"status\":\"" + status + "\"}]");
 }
 else{
     server.send(200, "application/json",
-                "[{\"canal\":\"" + String(readData("STREAMER")) + "\",\"color\":\"" +
-                    String(readData("cor")) + "\",\"status\":\"" + status + "\"}]");
+                "[{\"canal\":\"" + String(readData("STREAMER1")) + "\",\"color\":\"" +
+                    String(readData("cor1")) + "\",\"status\":\"" + status + "\"}]");
 
 }
 
@@ -181,31 +182,69 @@ else{
 
 void handleGetParam() {
     if (server.hasArg("STREAMER")) {
-      if(!server.arg("STREAMER").equalsIgnoreCase(streamerName)){
+   //   if(!server.arg("STREAMER").equalsIgnoreCase(streamerName)){
         streamerName = server.arg("STREAMER");  // get the streamer name and put
                                                 // on the streamerName variable
-        
-        saveData("STREAMER",server.arg("STREAMER").c_str());
+        if(server.arg("slot") == "1"){
+        saveData("STREAMER1",server.arg("STREAMER").c_str());
+        }
+        if(server.arg("slot") == "2"){
+        saveData("STREAMER2",server.arg("STREAMER").c_str());
+        }
+        if(server.arg("slot") == "3"){
+        saveData("STREAMER3",server.arg("STREAMER").c_str());
+        }
+        if(server.arg("slot") == "4"){
+        saveData("STREAMER4",server.arg("STREAMER").c_str());
+        }
+
+
+
         Serial.print(" Salvando nome "); 
-    }                       
+    //}                       
     }
-    if (server.hasArg("cor")) {
+    if (server.hasArg("cor")) { //salvando a cor em hexa
         
-        if(!server.arg("cor").equalsIgnoreCase(cor)){
+    //    if(!server.arg("cor").equalsIgnoreCase(cor)){
         cor = server.arg("cor");  // get the COLOR
-        saveData("cor",server.arg("cor").c_str());
+
+        if(server.arg("slot") == "1"){
+        saveData("cor1",server.arg("cor").c_str());
+        }
+        if(server.arg("slot") == "2"){
+        saveData("cor2",server.arg("cor").c_str());
+        }
+        if(server.arg("slot") == "3"){
+        saveData("cor3",server.arg("cor").c_str());
+        }
+        if(server.arg("slot") == "4"){
+        saveData("cor4",server.arg("cor").c_str());
+        }
         Serial.print(" Salvando cor "); 
-    }       
+   // }       
 
     }
 
+    //salvando a cor em rgb
     if (server.hasArg("r")) {
-      if(corR != server.arg("r").toInt()){
+        if(corR != server.arg("r").toInt()){
         const char* CR = server.arg("r").c_str();
         corR = server.arg("r").toInt();  // get the COLOR
         Serial.print(" Salvando R: "+corR);
-   
-        saveData("R",CR);
+
+       if(server.arg("slot") == "1"){
+        saveData("R1",CR);
+       }
+       if(server.arg("slot") == "2"){
+        saveData("R2",CR);
+       }
+       if(server.arg("slot") == "3"){
+        saveData("R3",CR);
+       }
+       if(server.arg("slot") == "4"){
+        saveData("R4",CR);
+       }
+
        // Serial.print(" Salvando R "); 
         }
     }
@@ -214,7 +253,20 @@ void handleGetParam() {
         const char* CG = server.arg("g").c_str();
         corG = server.arg("g").toInt();  // get the COLOR
         Serial.print(" Salvando G: "+corG);
-        saveData("G",CG);
+
+       if(server.arg("slot") == "1"){
+        saveData("G1",CG);
+       }
+       if(server.arg("slot") == "2"){
+        saveData("G2",CG);
+       }
+       if(server.arg("slot") == "3"){
+        saveData("G3",CG);
+       }
+       if(server.arg("slot") == "4"){
+        saveData("G4",CG);
+       }
+        
        // Serial.print(" Salvando R "); 
         }
     }
@@ -224,7 +276,20 @@ void handleGetParam() {
         const char* CB = server.arg("b").c_str();
         corB = server.arg("b").toInt();  // get the COLOR
         Serial.print(" Salvando B: "+corB);
-        saveData("B",CB);
+
+      if(server.arg("slot") == "1"){
+        saveData("B1",CB);
+       }
+      if(server.arg("slot") == "2"){
+        saveData("B2",CB);
+       }
+      if(server.arg("slot") == "3"){
+        saveData("B3",CB);
+       }
+      if(server.arg("slot") == "4"){
+        saveData("B4",CB);
+       }
+        
        // Serial.print(" Salvando R "); 
         }
     }
@@ -278,7 +343,7 @@ void handleGetParam() {
     Serial.print(" - ");
     Serial.println("color: " + cor + " rgb(" + server.arg("r") + ", " +
                  server.arg("g") + ", " + server.arg("b")+")");
-    Serial.println(") COR: #"+ String(readData("cor")));
+    Serial.println(") COR: #"+ String(readData("cor1")));
 }
 
 void handleNotFound() {
@@ -366,14 +431,14 @@ void setup() {
     pixels.clear();
 
   // jsonDoc = getEEPROM_JSON();
-    streamerName = String(readData("STREAMER"));;
-    cor = String(readData("cor"));
-   char* corRchar = readData("R");
-   char* corGchar = readData("G");
-   char* corBchar = readData("B");
+    streamerName = String(readData("STREAMER1"));;
+    cor = String(readData("cor1"));
+   char* corRchar = readData("R1");
+   char* corGchar = readData("G1");
+   char* corBchar = readData("B1");
    char* modochar = readData("modo");
 
-   Serial.print("cores salvas rgb: "+ String(readData("R"))+" "+ String(readData("G"))+" "+ String(readData("B")));
+   Serial.print("cores salvas rgb: "+ String(readData("R1"))+" "+ String(readData("G1"))+" "+ String(readData("B1")));
    Serial.println();
   
 
@@ -414,29 +479,34 @@ void loop() {
     server.handleClient();
 
     if (streamerName != "" && (millis() - lasTimeUpdateLed) > 500) {
-        // Serial.println("Recebendo stream data");
-        // Serial.println(response);
+
+
+//implementando sistema de slots, pra 4 streamers
+        
+        slot++;
+        if(slot == 5){
+          slot = 0;
+        }
+
+
+
+
+
+
+
+
         if (streamerIsOn(streamerName)) {// SE O STREAMER  ESTIVER EM LIVE
+
+        
             server.handleClient();
-          //  if(modo == 0 || modo == 3){
-            digitalWrite(LED_BUILTIN, 1);// ACENDER O LED DO ESP 
-              digitalWrite(LED_BUILTIN, 0);// ACENDER O LED DO ESP 
-          //  }
-          //  if(modo == 1 || modo == 3){
-              analogWrite(LED_R, String(readData("R")).toInt());// SETAR A COR DO LED RGB COMUM
-              analogWrite(LED_G, String(readData("G")).toInt());// SETAR A COR DO LED RGB COMUM
-              analogWrite(LED_B, String(readData("B")).toInt());// SETAR A COR DO LED RGB COMUM
-              digitalWrite(GND, 0);
-          //  }
-          //  if(modo == 2 || modo == 3){
-            //SETAR A COR DO LED ENDEREÇÁVEL
-            pixels.setPixelColor(0, String(readData("R")).toInt(), String(readData("G")).toInt(), String(readData("B")).toInt());  // definir cor dos leds
-            pixels.show();  // aplicar alterações nos leds
-          //  }
+
+
+         ligarled(String(readData("R1")).toInt(),String(readData("G1")).toInt(),String(readData("B1")).toInt());
+
             Serial.println("TA ON");
-          //  Serial.println(String(readData("R")).toInt());
-          //  Serial.println(String(readData("G")).toInt());
-          //  Serial.println(String(readData("B")).toInt());
+          //  Serial.println(String(readData("R1")).toInt());
+          //  Serial.println(String(readData("G1")).toInt());
+          //  Serial.println(String(readData("B1")).toInt());
           //  Serial.println(digitalRead(GND));
             status = 1;
             
@@ -568,5 +638,23 @@ void handlecredenciais() {  // send HTML to the page
                            
     }
 
+}
+
+void ligarled(int R, int G, int B){
+   //  if(modo == 0 || modo == 3){
+            digitalWrite(LED_BUILTIN, 1);// ACENDER O LED DO ESP 
+              digitalWrite(LED_BUILTIN, 0);// ACENDER O LED DO ESP 
+          //  }
+          //  if(modo == 1 || modo == 3){
+              analogWrite(LED_R, R);// SETAR A COR DO LED RGB COMUM
+              analogWrite(LED_G, G);// SETAR A COR DO LED RGB COMUM
+              analogWrite(LED_B, B);// SETAR A COR DO LED RGB COMUM
+              digitalWrite(GND, 0);
+          //  }
+          //  if(modo == 2 || modo == 3){
+            //SETAR A COR DO LED ENDEREÇÁVEL
+            pixels.setPixelColor(0, R, G, B);  // definir cor dos leds
+            pixels.show();  // aplicar alterações nos leds
+          //  }
 }
 
